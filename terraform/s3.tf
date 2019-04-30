@@ -1,30 +1,39 @@
 resource "aws_s3_bucket" "compiler-explorer" {
   bucket = "compiler-explorer"
-  acl = "private"
+  acl    = "private"
+
   tags {
     Site = "CompilerExplorer"
   }
+
   cors_rule {
     allowed_headers = [
-      "Authorization"
+      "Authorization",
     ]
+
     allowed_methods = [
-      "GET"
+      "GET",
     ]
+
     allowed_origins = [
-      "*"
+      "*",
     ]
+
     max_age_seconds = 3000
   }
+
   # Keep only five years of cloudfront logs (See the privacy policy in the compiler explorer project)
   lifecycle_rule {
     enabled = true
+
     expiration {
       days = 32
     }
+
     noncurrent_version_expiration {
       days = 1
     }
+
     # Covers both cloudfront-logs and cloudfront-logs-ce:
     prefix = "cloudfront-logs"
   }
@@ -32,6 +41,7 @@ resource "aws_s3_bucket" "compiler-explorer" {
 
 resource "aws_s3_bucket_policy" "compiler-explorer" {
   bucket = "${aws_s3_bucket.compiler-explorer.id}"
+
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -85,7 +95,8 @@ POLICY
 
 resource "aws_s3_bucket" "opt-s3-godbolt-org" {
   bucket = "opt-s3.godbolt.org"
-  acl = "private"
+  acl    = "private"
+
   tags {
     Site = "CompilerExplorer"
   }
@@ -93,19 +104,24 @@ resource "aws_s3_bucket" "opt-s3-godbolt-org" {
 
 resource "aws_s3_bucket" "storage-godbolt-org" {
   bucket = "storage.godbolt.org"
-  acl = "private"
+  acl    = "private"
+
   tags {
     Site = "CompilerExplorer"
   }
+
   lifecycle_rule {
-    enabled = true
+    enabled                                = true
     abort_incomplete_multipart_upload_days = 7
+
     expiration {
       days = 1
     }
+
     noncurrent_version_expiration {
       days = 1
     }
+
     prefix = "cache/"
   }
 }
